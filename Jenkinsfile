@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${registry}:${BUILD_NUMBER}") // Name and version the image
-                    echo dockerImage
+                      echo "Built Docker Image: ${dockerImage}"
                     docker.withRegistry('', registryCredential) {
                         dockerImage.push() // Push image to Docker Hub
                     }
