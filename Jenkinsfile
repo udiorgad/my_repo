@@ -24,7 +24,7 @@ pipeline {
         always {
             script {
                 echo "in script"
-                // bat "docker rmi ${registry}:${BUILD_NUMBER}" // Delete the local image at the end
+                bat "docker rmi ${registry}:${BUILD_NUMBER}" // Delete the local image at the end
             }
         }
     }
