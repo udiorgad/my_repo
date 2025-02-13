@@ -1,19 +1,29 @@
 pipeline {
+    agent any
     environment {
-    registry = "udiorgad/my_jenkins"  // The name of your user and repository (which can be created manually)
-    registryCredential = "docker_hub" // The credentials used to your repo
-    dockerImage = "" // will be overridden later
-  }
-        stage('build and push image') {
+        registry = "udiorgad/my_jenkins"  // The name of your Docker Hub repository
+        registryCredential = "docker_hub" // The credentials ID stored in Jenkins
+        dockerImage = "" // Will be assigned dynamically
+    }
+    
+    stages {
+        stage('Build and Push Image') {
             steps {
-               script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" // give a name and version to image
+                script {
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}") // Name and version the image
                     docker.withRegistry('', registryCredential) {
-                    dockerImage.push() // push image to hub
+                        dockerImage.push() // Push image to Docker Hub
+                    }
                 }
             }
         }
-         post {
-         always {
-             bat "docker rmi $registry:$BUILD_NUMBER" // delete the local image at the end
-}}}
+    }
+    
+    post {
+        always {
+            script {
+                bat "docker rmi ${registry}:${BUILD_NUMBER}" // Delete the local image at the end
+            }
+        }
+    }
+}
